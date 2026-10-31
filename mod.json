@@ -16,35 +16,11 @@
         "developer"
     ],
     "settings": {
-        "terminal-title": {
-            "type": "title",
-            "name": "terminal",
-            "description": "terminal window options"
-        },
-        "terminal-enabled": {
-            "type": "bool",
-            "name": "enable terminal",
-            "description": "allow the terminal key to open the afterflow log window",
-            "default": true
-        },
-        "keybinds-title": {
-            "type": "title",
-            "name": "keybinds",
-            "description": "change geodes keybinding anytime for afterflow"
-        },
-        "keybind-stage": {
-            "type": "keybind",
-            "name": "cycle stages",
-            "description": "cycle prediction stages",
-            "category": "gameplay",
-            "default": ["F6"]
-        },
-        "keybind-terminal": {
-            "type": "keybind",
-            "name": "terminal",
-            "description": "open or close the afterflow terminal",
-            "category": "universal",
-            "default": ["F9"]
+        "open-menu-setting": {
+            "type": "custom",
+            "name": "Afterflow settings",
+            "description": "Open Settings",
+            "category": "universal"
         }
     }
 }
