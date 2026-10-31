@@ -367,3 +367,61 @@ namespace {
 $execute {
     log::info("Afterflow loaded on Android!");
 }
+
+#include <Geode/loader/SettingV3.hpp>
+#include <Geode/ui/GeodeUI.hpp>
+
+// Создаем custom-сеттинг для кнопки
+class OpenAfterflowMenuSettingV3 : public SettingV3 {
+public:
+    static Result<std::shared_ptr<OpenAfterflowMenuSettingV3>> parse(std::string const& key, std::string const& modID, matjson::Value const& json) {
+        auto res = std::make_shared<OpenAfterflowMenuSettingV3>();
+        auto root = checkJson(json, "OpenAfterflowMenuSettingV3");
+        res->init(key, modID);
+        return root.ok(res);
+    }
+
+    SettingNodeV3* createNode(float width) override;
+};
+
+class OpenAfterflowMenuSettingNodeV3 : public SettingNodeV3 {
+protected:
+    bool init(std::shared_ptr<OpenAfterflowMenuSettingV3> setting, float width) {
+        if (!SettingNodeV3::init(setting, width)) return false;
+
+        auto menu = CCMenu::create();
+        menu->setPosition({width - 40.f, width / 2.f}); // или центр контейнера
+
+        auto btnSprite = ButtonSprite::create("Open", "goldFont.fnt", "GJ_button_01.png", 0.8f);
+        auto btn = CCMenuItemSpriteExtra::create(btnSprite, this, menu_selector(OpenAfterflowMenuSettingNodeV3::onOpen));
+        
+        menu::addChild(btn);
+        this->addChild(menu);
+        this->updateState(nullptr);
+        return true;
+    }
+
+    void onOpen(CCObject*) {
+        // Открываем всплывающее окно / UI Geode
+        geode::openSettingsPopup(Mod::get());
+    }
+
+public:
+    static OpenAfterflowMenuSettingNodeV3* create(std::shared_ptr<OpenAfterflowMenuSettingV3> setting, float width) {
+        auto ret = new OpenAfterflowMenuSettingNodeV3();
+        if (ret && ret->init(setting, width)) {
+            ret->autorelease();
+            return ret;
+        }
+        CC_SAFE_DELETE(ret);
+        return nullptr;
+    }
+};
+
+SettingNodeV3* OpenAfterflowMenuSettingV3::createNode(float width) {
+    return OpenAfterflowMenuSettingNodeV3::create(std::static_pointer_cast<OpenAfterflowMenuSettingV3>(shared_from_this()), width);
+}
+
+$execute {
+    (void)Mod::get()->registerCustomSetting("open-menu-setting", &OpenAfterflowMenuSettingV3::parse);
+}
