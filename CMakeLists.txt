@@ -9,6 +9,7 @@ endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(Afterflow VERSION 2.1.6)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # Add all source files inside src (recursively)
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
