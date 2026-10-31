@@ -337,7 +337,7 @@ namespace {
     bool isMarginUsed = false;
 
     void cycleStage(int direction);
-    void toggleTerminal() {} // Заглушка для Android
+    void toggleTerminal() {}
     std::string stageText();
 
     float stepScale() {
@@ -355,7 +355,6 @@ namespace {
         return std::max(1, static_cast<int>(std::lround(ticksAt240Hz * stepScale())));
     }
 
-    // Заглушки для десктопних функцій, щоб вони не викликали помилок компіляції на Android
     bool isTerminalEnabled() {
         return false;
     }
@@ -363,22 +362,17 @@ namespace {
     void writeTerminalFlags() {}
 }
 
-// Додаємо базовий клас або ініціалізацію моду через $execute для Android
 $execute {
     log::info("Afterflow loaded on Android!");
 }
 
-#include <Geode/loader/SettingV3.hpp>
-#include <Geode/ui/GeodeUI.hpp>
-
-// Создаем custom-сеттинг для кнопки
+// Кастомна кнопка для відкриття меню налаштувань
 class OpenAfterflowMenuSettingV3 : public SettingV3 {
 public:
     static Result<std::shared_ptr<OpenAfterflowMenuSettingV3>> parse(std::string const& key, std::string const& modID, matjson::Value const& json) {
         auto res = std::make_shared<OpenAfterflowMenuSettingV3>();
-        auto root = checkJson(json, "OpenAfterflowMenuSettingV3");
         res->init(key, modID);
-        return root.ok(res);
+        return Ok(res);
     }
 
     SettingNodeV3* createNode(float width) override;
@@ -390,19 +384,18 @@ protected:
         if (!SettingNodeV3::init(setting, width)) return false;
 
         auto menu = CCMenu::create();
-        menu->setPosition({width - 40.f, width / 2.f}); // или центр контейнера
+        menu->setPosition({width - 50.f, 25.f});
 
         auto btnSprite = ButtonSprite::create("Open", "goldFont.fnt", "GJ_button_01.png", 0.8f);
         auto btn = CCMenuItemSpriteExtra::create(btnSprite, this, menu_selector(OpenAfterflowMenuSettingNodeV3::onOpen));
         
-        menu::addChild(btn);
+        menu->addChild(btn);
         this->addChild(menu);
         this->updateState(nullptr);
         return true;
     }
 
     void onOpen(CCObject*) {
-        // Открываем всплывающее окно / UI Geode
         geode::openSettingsPopup(Mod::get());
     }
 
